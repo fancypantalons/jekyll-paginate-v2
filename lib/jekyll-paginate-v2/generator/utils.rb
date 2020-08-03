@@ -7,6 +7,14 @@ module Jekyll
     #
     class Utils
 
+      def self.page_weight(page)
+        if (page.data["layout"] == "article") || (page.data["layout"] == "review")
+          return 1
+        else
+          return 0.05
+        end
+      end
+
       # Static: Calculate the number of pages.
       #
       # all_posts - The Array of all Posts.
@@ -14,7 +22,7 @@ module Jekyll
       #
       # Returns the Integer number of pages.
       def self.calculate_number_of_pages(all_posts, per_page)
-        (all_posts.size.to_f / per_page.to_i).ceil
+        (all_posts.sum { |p| page_weight(p) }.to_f / per_page.to_i).ceil
       end
 
       # Static: returns a fully formatted string with the current (:num) page number and maximum (:max) page count replaced if configured

@@ -7,7 +7,7 @@ module Jekyll
     class Paginator
       attr_reader :page, :per_page, :posts, :total_posts, :total_pages,
         :previous_page, :previous_page_path, :next_page, :next_page_path, :page_path, :page_trail,
-        :first_page, :first_page_path, :last_page, :last_page_path
+        :first_page, :first_page_path, :last_page, :last_page_path, :first_post_index, :last_post_index
 
       def page_trail
         @page_trail
@@ -19,7 +19,7 @@ module Jekyll
       
       # Initialize a new Paginator.
       #
-      def initialize(config_per_page, first_index_page_url, paginated_page_url, posts, cur_page_nr, num_pages, default_indexpage, default_ext)
+      def initialize(config_per_page, first_index_page_url, paginated_page_url, posts, prevpager, cur_page_nr, num_pages, default_indexpage, default_ext)
         @page = cur_page_nr
         @per_page = config_per_page.to_i
         @total_pages = num_pages
@@ -28,14 +28,21 @@ module Jekyll
           raise RuntimeError, "page number can't be greater than total pages: #{@page} > #{@total_pages}"
         end
 
-        init = (@page - 1) * @per_page
-        offset = (init + @per_page - 1) >= posts.size ? posts.size : (init + @per_page - 1)
+        @first_post_index = prevpager.nil? ? 0 : prevpager.last_post_index + 1
+        count = 0
+
+        posts.each.with_index(@first_post_index) do |p, index|
+          @last_post_index = index
+          count = count + Utils.page_weight(p)
+
+          break if count >= @per_page
+        end
 
         # Ensure that the current page has correct extensions if needed
         this_page_url = Utils.ensure_full_path(@page == 1 ? first_index_page_url : paginated_page_url,
                                                !default_indexpage || default_indexpage.length == 0 ? 'index' : default_indexpage,
                                                !default_ext || default_ext.length == 0 ? '.html' : default_ext)
-        
+
         # To support customizable pagination pages we attempt to explicitly append the page name to 
         # the url incase the user is using extensionless permalinks. 
         if default_indexpage && default_indexpage.length > 0
@@ -46,7 +53,7 @@ module Jekyll
         end        
 
         @total_posts = posts.size
-        @posts = posts[init..offset]
+        @posts = posts[@first_post_index..@last_post_index]
         @page_path = Utils.format_page_number(this_page_url, cur_page_nr, @total_pages)
 
         @previous_page = @page != 1 ? @page - 1 : nil

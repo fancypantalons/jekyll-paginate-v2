@@ -275,6 +275,9 @@ module Jekyll
         # In case there are no (visible) posts, generate the index file anyway
         total_pages = 1 if total_pages.zero?
 
+        prevpage = nil
+        newpage = nil
+
         # Now for each pagination page create it and configure the ranges for the collection
         # This .pager member is a built in thing in Jekyll and defines the paginator implementation
         # Simpy override to use mine
@@ -282,6 +285,7 @@ module Jekyll
 
           # 1. Create the in-memory page
           #    External Proc call to create the actual page for us (this is passed in when the pagination is run)
+          prevpage = newpage
           newpage = PaginationPage.new( template, cur_page_nr, total_pages, indexPageWithExt )
 
           # 2. Create the url for the in-memory page (calc permalink etc), construct the title, set all page.data values needed
@@ -295,7 +299,7 @@ module Jekyll
           paginated_page_url = File.join(first_index_page_url, paginated_page_url)
           
           # 3. Create the pager logic for this page, pass in the prev and next page numbers, assign pager to in-memory page
-          newpage.pager = Paginator.new( config['per_page'], first_index_page_url, paginated_page_url, using_posts, cur_page_nr, total_pages, indexPageName, indexPageExt)
+          newpage.pager = Paginator.new( config['per_page'], first_index_page_url, paginated_page_url, using_posts, prevpage.nil? ? nil : prevpage.pager, cur_page_nr, total_pages, indexPageName, indexPageExt)
 
           # Create the url for the new page, make sure we prepend any permalinks that are defined in the template page before
           if newpage.pager.page_path.end_with? '/'
