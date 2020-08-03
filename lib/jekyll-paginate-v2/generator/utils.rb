@@ -22,7 +22,19 @@ module Jekyll
       #
       # Returns the Integer number of pages.
       def self.calculate_number_of_pages(all_posts, per_page)
-        (all_posts.sum { |p| page_weight(p) }.to_f / per_page.to_i).ceil
+        count = 0
+        sum = 0
+
+        all_posts.each do |p|
+          sum = sum + Utils.page_weight(p)
+
+          if sum >= per_page
+            sum = 0
+            count = count + 1
+          end
+        end
+
+        return count
       end
 
       # Static: returns a fully formatted string with the current (:num) page number and maximum (:max) page count replaced if configured

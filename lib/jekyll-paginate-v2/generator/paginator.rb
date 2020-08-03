@@ -16,7 +16,7 @@ module Jekyll
       def page_trail=(page_array)
         @page_trail = page_array
       end
-      
+
       # Initialize a new Paginator.
       #
       def initialize(config_per_page, first_index_page_url, paginated_page_url, posts, prevpager, cur_page_nr, num_pages, default_indexpage, default_ext)
@@ -29,10 +29,11 @@ module Jekyll
         end
 
         @first_post_index = prevpager.nil? ? 0 : prevpager.last_post_index + 1
+        @last_post_index = @first_post_index - 1
         count = 0
 
-        posts.each.with_index(@first_post_index) do |p, index|
-          @last_post_index = index
+        posts.drop(@first_post_index).each do |p, index|
+          @last_post_index = @last_post_index + 1
           count = count + Utils.page_weight(p)
 
           break if count >= @per_page
