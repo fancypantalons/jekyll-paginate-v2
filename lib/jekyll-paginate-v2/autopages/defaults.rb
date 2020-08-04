@@ -9,6 +9,7 @@ module Jekyll
         'title'         => 'Posts tagged with :tag',
         'permalink'     => '/tag/:tag',
         'enabled'       => true,
+        'show_hidden'   => true,
         'slugify'       => {
                               'mode' => 'none', # [raw default pretty ascii latin], none gives back the same string
                               'cased'=> false # If cased is true, all uppercase letters in the result string are replaced with their lowercase counterparts.
@@ -19,6 +20,7 @@ module Jekyll
         'title'         => 'Posts in category :cat',
         'permalink'     => '/category/:cat',
         'enabled'       => true,
+        'show_hidden'   => true,
         'slugify'       => {
                               'mode' => 'none', # [raw default pretty ascii latin], none gives back the same string
                               'cased'=> false # If cased is true, all uppercase letters in the result string are replaced with their lowercase counterparts.
@@ -29,6 +31,7 @@ module Jekyll
         'title'         => 'Posts in collection :coll',
         'permalink'     => '/collection/:coll',
         'enabled'       => true,
+        'show_hidden'   => true,
         'slugify'       => {
                               'mode' => 'none', # [raw default pretty ascii latin], none gives back the same string
                               'cased'=> false # If cased is true, all uppercase letters in the result string are replaced with their lowercase counterparts.

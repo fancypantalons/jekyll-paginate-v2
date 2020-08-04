@@ -66,6 +66,11 @@ module Jekyll
         return nil if posts.nil?
         return nil if source_posts.nil? # If the source is empty then simply don't do anything
         return posts if config.nil?
+
+        if not config["show_hidden"]
+          posts = posts.reject { |doc| doc['hidden'] }
+        end
+
         return posts if !config.has_key?(config_key)
         return posts if config[config_key].nil?
         
@@ -83,7 +88,7 @@ module Jekyll
           key = key.to_s.downcase.strip
           posts = PaginationIndexer.intersect_arrays(posts, source_posts[key])
         end
-        
+
         # The fully filtered final post list
         return posts
       end #function read_config_value_and_filter_posts

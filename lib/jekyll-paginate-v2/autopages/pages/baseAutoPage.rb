@@ -25,7 +25,10 @@ module Jekyll
 
         # Read any possible autopage overrides in the layout page
         autopage_layout_config = Jekyll::Utils.deep_merge_hashes( autopage_config, self.data['autopages'] || {} )
-        
+
+        # Set up config overrides
+        pagination_layout_config["show_hidden"] = autopage_layout_config["show_hidden"]
+
         # Now set the page specific pagination data
         set_autopage_data_lambda.call(pagination_layout_config)
 
@@ -34,7 +37,7 @@ module Jekyll
 
         # Construct the title
         page_title = autopage_layout_config['title']
-               
+
         # NOTE: Should we set this before calling read_yaml as that function validates the permalink structure 
         self.data['permalink'] = permalink_formatted
         @url = File.join(permalink_formatted, @name)
